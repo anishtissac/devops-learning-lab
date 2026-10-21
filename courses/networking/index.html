@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A complete networking curriculum for Linux, cloud, DevOps, and AI. Learn from first principles with detailed notes, diagrams, interactive demos, and practical troubleshooting.">
+  <meta name="theme-color" content="#0b1020">
+  <title>Networking — DevOps Learning Lab</title>
+  <!--
+    Repository path: courses/networking/index.html
+    This page is self-contained. No build step or external libraries are needed.
+    All 74 lesson files are included inside courses/networking/lessons/.
+    To link a new lesson, replace that row's <span class="lesson-title"> with
+    <a class="lesson-title" href="lessons/your-lesson-file.html">Title</a>.
+    Keep the lesson number, description, and module structure.
+  -->
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: #121c2e;
+      --line: #2b3953;
+      --text: #f0f4fc;
+      --muted: #b2bfd3;
+      --lime: #c9f36b;
+      --cyan: #76dcec;
+      --purple: #c5b0ff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+    body { margin: 0; background: radial-gradient(ellipse at 95% 0, #20384d60, transparent 42rem), var(--bg); color: var(--text); font: 16px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    button, a, input, summary { outline-offset: 5px; }
+    :focus-visible { outline: 2px solid var(--cyan); }
+    [hidden] { display: none !important; }
+    .wrap { width: min(1180px, 92vw); margin-inline: auto; }
+    .skip { position: absolute; top: -100px; left: 16px; z-index: 30; padding: 10px 16px; border-radius: 8px; background: var(--lime); color: #122014; }
+    .skip:focus { top: 10px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+    .topbar { position: sticky; top: 0; z-index: 20; background: #0b1020f2; border-bottom: 1px solid #ffffff15; backdrop-filter: blur(16px); }
+    .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: -.025em; }
+    .brand-mark { display: grid; place-items: center; flex-shrink: 0; width: 39px; height: 39px; border-radius: 12px; background: var(--lime); color: #182018; font-size: .83rem; font-weight: 950; }
+    .brand small { display: block; font-size: .62rem; font-weight: 550; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+    .navlinks { display: flex; align-items: center; gap: 23px; font-size: .81rem; color: var(--muted); }
+    .navlinks a:hover, .footer a:hover { color: var(--lime); }
+    .back { padding: 8px 12px; border: 1px solid #40516b; border-radius: 9px; color: var(--text); }
+    .breadcrumb { display: flex; gap: 9px; padding-top: 24px; color: var(--muted); font-size: .77rem; }
+    .breadcrumb span:last-child { color: var(--text); }
+    .hero { display: grid; grid-template-columns: 1.2fr .8fr; align-items: center; gap: 50px; padding: 40px 0 38px; }
+    .eyebrow, .section-label { font-size: .69rem; font-weight: 800; text-transform: uppercase; letter-spacing: .13em; }
+    .eyebrow { color: var(--lime); }
+    .eyebrow span { display: inline-block; margin-right: 9px; padding: 4px 8px; border: 1px solid #667b44; border-radius: 6px; letter-spacing: .04em; }
+    h1 { margin: 20px 0 14px; font-size: clamp(3.2rem, 7.7vw, 6.1rem); line-height: .98; letter-spacing: -.065em; }
+    .hero h2 { margin: 0 0 17px; font-size: clamp(1.5rem, 2.7vw, 2.05rem); font-weight: 600; line-height: 1.3; letter-spacing: -.035em; }
+    .hero h2 span { color: var(--lime); }
+    .lead { max-width: 650px; margin: 0; color: var(--muted); font-size: .98rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 25px; }
+    .button { display: inline-flex; justify-content: center; align-items: center; gap: 10px; min-height: 44px; padding: 10px 15px; background: #ffffff04; border: 1px solid #40516b; border-radius: 10px; color: var(--text); font-size: .82rem; font-weight: 750; cursor: pointer; transition: border-color .15s, background .15s; }
+    .button:hover { border-color: var(--cyan); background: #76dcec09; }
+    .button.primary { border-color: var(--lime); background: var(--lime); color: #172116; }
+    .button.primary:hover { background: #dcff94; }
+    .hero-note { margin: 17px 0 0; color: #b1c5a4; font-size: .76rem; }
+    .path-card { border: 1px solid #455c73; border-radius: 22px; overflow: hidden; background: radial-gradient(ellipse at 50% 20%, #28506340, transparent 95%), #111c2e; box-shadow: 0 20px 60px #0003; }
+    .path-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 16px 19px; border-bottom: 1px solid #ffffff14; color: #becce0; font-size: .73rem; }
+    .path-head span:last-child { color: var(--cyan); font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; }
+    .path-map { display: block; width: 100%; height: auto; }
+    .map-box { fill: #17253b; stroke: #57758a; stroke-width: 1.3; }
+    .map-label { fill: #f0f4fc; font: 650 13px system-ui, sans-serif; }
+    .map-sub { fill: #b4c6db; font: 10px system-ui, sans-serif; }
+    .map-path { fill: none; stroke: #85a89f; stroke-width: 2; }
+    .path-question { margin: 0 19px 18px; padding: 12px 13px; border: 1px solid #425769; border-radius: 10px; background: #0b1725; color: #c1cede; font-size: .79rem; }
+    .path-question strong { color: var(--lime); }
+    .facts { display: grid; grid-template-columns: repeat(4, 1fr); margin-bottom: 12px; border: 1px solid var(--line); border-radius: 15px; background: #101a2a; }
+    .fact { padding: 18px 21px; border-right: 1px solid var(--line); }
+    .fact:last-child { border-right: 0; }
+    .fact strong { display: block; font-size: 1rem; letter-spacing: -.02em; }
+    .fact span { color: var(--muted); font-size: .74rem; }
+    .section { padding: 35px 0; }
+    .section-label { color: var(--cyan); }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 22px; }
+    .section-head h2 { margin: 7px 0 0; font-size: clamp(1.65rem, 3.2vw, 2.15rem); line-height: 1.2; letter-spacing: -.04em; }
+    .section-head p { max-width: 440px; margin: 0; color: var(--muted); font-size: .87rem; }
+    .outcomes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .outcome, .format, .lab-card { padding: 20px; border: 1px solid var(--line); border-radius: 15px; background: linear-gradient(145deg, #151f33, #10192b); }
+    .outcome .icon { color: var(--lime); font-size: 1.2rem; }
+    .outcome h3, .format h3, .lab-card h3 { margin: 10px 0 6px; font-size: .94rem; line-height: 1.4; }
+    .outcome p, .format p, .lab-card p { margin: 0; color: var(--muted); font-size: .81rem; }
+    .curriculum-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: start; }
+    .course-aside { position: sticky; top: 99px; padding: 18px; border: 1px solid var(--line); border-radius: 15px; background: #101a2a; }
+    .course-aside h3 { margin: 0 0 12px; font-size: .84rem; }
+    .phase-nav { display: grid; gap: 9px; }
+    .phase-nav a { display: block; padding: 10px; border: 1px solid #ffffff0c; border-radius: 9px; background: #ffffff03; color: #cfdbeb; font-size: .76rem; }
+    .phase-nav a:hover { border-color: #708c4d; color: var(--lime); }
+    .phase-nav small { display: block; margin-top: 2px; color: var(--muted); font-size: .67rem; }
+    .aside-note { margin: 17px 0 0; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: .74rem; }
+    .aside-note strong { color: var(--text); }
+    .toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin-bottom: 9px; }
+    .search { flex: 1; min-width: 170px; min-height: 44px; padding: 9px 12px; border: 1px solid #40516b; border-radius: 10px; background: #101a2a; color: var(--text); font-size: .84rem; }
+    .search::placeholder { color: #9dadc3; opacity: 1; }
+    .toolbar .button { padding: 9px 12px; font-size: .74rem; }
+    .result-count { min-height: 24px; margin: 0 0 15px; color: var(--muted); font-size: .74rem; }
+    .phase-heading { display: flex; align-items: center; gap: 12px; margin: 26px 0 12px; color: #c5d3e6; font-size: .73rem; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; }
+    .phase-group:first-of-type .phase-heading { margin-top: 0; }
+    .phase-heading::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+    .module { overflow: hidden; margin-bottom: 10px; border: 1px solid var(--line); border-radius: 14px; background: #111b2d; scroll-margin-top: 105px; }
+    .module[open] { border-color: #60764b; background: linear-gradient(145deg, #172334, #101a2b); }
+    .module summary { display: flex; align-items: center; gap: 13px; padding: 17px 16px; cursor: pointer; list-style: none; }
+    .module summary::-webkit-details-marker { display: none; }
+    .module-number { display: grid; place-items: center; flex: 0 0 35px; height: 35px; border: 1px solid #435672; border-radius: 10px; color: #b1c1d8; font-size: .75rem; font-weight: 800; }
+    .module[open] .module-number { background: #c9f36b10; color: var(--lime); border-color: #738851; }
+    .module-heading { flex: 1; min-width: 0; }
+    .module-name { display: block; color: var(--text); font-size: .93rem; font-weight: 750; line-height: 1.35; }
+    .module-sub { display: block; margin-top: 4px; color: #b0bfd3; font-size: .72rem; line-height: 1.45; }
+    .module-meta { color: #a6b8cf; font-size: .66rem; white-space: nowrap; }
+    .plus { width: 13px; color: var(--cyan); font-size: 1.2rem; }
+    .module[open] .plus { transform: rotate(45deg); color: var(--lime); }
+    .module-body { padding: 0 17px 17px; }
+    .module-intro { margin: 0 0 14px; padding: 11px 13px; border-left: 2px solid #8da957; background: #c9f36b06; color: #bbcbdc; font-size: .8rem; }
+    .module-intro strong { color: #e3edda; }
+    .lessons { list-style: none; margin: 0; padding: 0; }
+    .lesson { display: flex; align-items: start; gap: 12px; padding: 14px 7px; border-top: 1px solid #ffffff10; scroll-margin-top: 110px; }
+    .lesson-number { flex: 0 0 29px; padding-top: 2px; color: #94a9c5; font: 600 .7rem/1.7 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .lesson-copy { flex: 1; min-width: 0; }
+    .lesson-title { display: block; color: #e5edf9; font-size: .84rem; font-weight: 650; line-height: 1.45; }
+    a.lesson-title { color: var(--lime); text-decoration: underline; text-decoration-color: #c9f36b66; text-underline-offset: 4px; }
+    a.lesson-title:hover { color: #e4ffad; text-decoration-color: currentColor; }
+    a.lesson-title .read-label { display: inline-block; margin-left: 9px; color: var(--lime); font-size: .67rem; }
+    .lesson-copy p { margin: 4px 0 0; color: #acbdd3; font-size: .77rem; line-height: 1.6; }
+    .module-lab { margin-top: 8px; padding: 12px 13px; border: 1px solid #36546b; border-radius: 10px; background: #76dcec06; }
+    .module-lab strong { display: block; margin-bottom: 3px; color: var(--cyan); font-size: .67rem; letter-spacing: .06em; text-transform: uppercase; }
+    .module-lab p { margin: 0; color: #bed4e2; font-size: .77rem; }
+    .empty { padding: 25px; border: 1px dashed #516581; border-radius: 13px; text-align: center; }
+    .empty p { color: var(--muted); font-size: .85rem; }
+    .lab-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .lab-card .case { color: #ffca93; font-size: .65rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 13px; }
+    .chips code { padding: 3px 6px; border: 1px solid #ffffff20; border-radius: 6px; background: #ffffff04; color: #d1e1f4; font: .66rem/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .format-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .format .step { color: var(--purple); font-size: .67rem; font-weight: 800; letter-spacing: .07em; }
+    .practice-note { margin: 15px 0 0; padding: 15px 18px; border: 1px solid #526b3d; border-radius: 12px; background: #c9f36b07; color: #c7d6c0; font-size: .81rem; }
+    .practice-note strong { color: #e7f5d7; }
+    .study-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
+    .study-card { padding: 22px; border: 1px solid var(--line); border-radius: 15px; background: #111b2d; }
+    .study-card h3 { margin: 0 0 15px; font-size: .95rem; }
+    .routine { list-style: none; padding: 0; margin: 0; }
+    .routine li { display: flex; align-items: baseline; gap: 14px; padding: 9px 0; border-top: 1px solid #ffffff10; color: #c3d0e2; font-size: .82rem; }
+    .routine li:first-child { border-top: 0; }
+    .routine strong { color: var(--lime); min-width: 55px; font-size: .74rem; white-space: nowrap; }
+    .note-prompts { padding-left: 20px; margin: 0; color: #c3d0e2; font-size: .82rem; }
+    .note-prompts li { padding: 5px 0; }
+    .study-foot { margin: 13px 0 0; color: var(--muted); font-size: .75rem; }
+    .final-cta { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 22px; padding: 24px; border: 1px solid #627846; border-radius: 16px; background: linear-gradient(110deg, #c9f36b0b, #76dcec06); }
+    .final-cta h2 { margin: 0 0 5px; font-size: 1.25rem; letter-spacing: -.025em; }
+    .final-cta p { margin: 0; color: var(--muted); font-size: .83rem; }
+    .footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin-top: 35px; padding: 24px 0; border-top: 1px solid var(--line); color: #a2b4cd; font-size: .74rem; }
+    @media (max-width: 1000px) {
+      .hero { gap: 25px; }
+      .curriculum-layout { grid-template-columns: 190px minmax(0, 1fr); gap: 17px; }
+      .navlinks { gap: 15px; }
+      .module-meta { display: none; }
+      .format-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 760px) {
+      .hero { grid-template-columns: 1fr; padding-top: 28px; }
+      .path-card { width: 100%; max-width: 500px; margin-inline: auto; }
+      .nav { min-height: 68px; }
+      .navlinks a:not(.back) { display: none; }
+      .brand { font-size: .86rem; }
+      .brand small { font-size: .56rem; }
+      .navlinks .back { padding: 7px 9px; font-size: .71rem; }
+      .facts { grid-template-columns: repeat(2, 1fr); }
+      .fact:nth-child(2) { border-right: 0; }
+      .fact:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .section { padding: 26px 0; }
+      .section-head { display: block; }
+      .section-head p { margin-top: 11px; max-width: none; }
+      .curriculum-layout { grid-template-columns: 1fr; }
+      .course-aside { position: static; }
+      .phase-nav { grid-template-columns: repeat(3, 1fr); }
+      .phase-nav a { padding: 9px; font-size: .71rem; }
+      .aside-note { margin-top: 12px; padding-top: 12px; }
+      .outcomes, .lab-grid { grid-template-columns: 1fr 1fr; }
+      .study-grid { grid-template-columns: 1fr; }
+      .final-cta { flex-wrap: wrap; }
+    }
+    @media (max-width: 440px) {
+      .brand-mark { width: 32px; height: 35px; border-radius: 9px; }
+      .brand { gap: 8px; font-size: .78rem; }
+      .brand small { font-size: .51rem; }
+      .nav { gap: 8px; }
+      .back { white-space: nowrap; }
+      .hero h2 { font-size: 1.5rem; }
+      .fact { padding: 15px; }
+      .fact strong { font-size: .9rem; }
+      .outcomes, .lab-grid, .format-grid { grid-template-columns: 1fr; }
+      .phase-nav { grid-template-columns: 1fr; gap: 6px; }
+      .phase-nav small { display: inline; margin-left: 7px; }
+      .toolbar .search { flex-basis: 100%; }
+      .toolbar .button { flex: 1; }
+      .module summary { gap: 10px; padding: 15px 12px; }
+      .module-name { font-size: .87rem; }
+      .module-body { padding: 0 12px 13px; }
+      .module-number { flex-basis: 31px; height: 32px; }
+      .lesson { gap: 7px; padding: 13px 2px; }
+      .lesson-number { flex-basis: 25px; }
+      .lesson-title { font-size: .82rem; }
+      .final-cta { padding: 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+    @media print {
+      body { background: white; color: #111; font-size: 10pt; }
+      .wrap { width: 100%; }
+      .topbar, .skip, .toolbar, .course-aside, .path-card, .actions, .final-cta, .footer { display: none !important; }
+      .hero, .curriculum-layout { display: block; }
+      h1 { font-size: 32pt; }
+      .module, .outcome, .format, .study-card, .lab-card, .facts { background: white !important; border-color: #aaa; }
+      .module-name, .lesson-title, .module-intro strong, .fact strong { color: #111 !important; }
+      .lead, .section-head p, .module-sub, .lesson-copy p, .module-intro, .module-lab p, .outcome p, .format p, .lab-card p, .fact span { color: #333; }
+      .module-lab { background: #f7f7f7; border-color: #aaa; }
+      .module-lab strong, .section-label, .hero h2 span, .eyebrow { color: #245025; }
+      .module summary { break-after: avoid; }
+      .lesson { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to course content</a>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="../../index.html" aria-label="DevOps Learning Lab course catalog"><span class="brand-mark">DL</span><span>DevOps Learning Lab<small>Learn · Practice · Explain</small></span></a>
+      <nav class="navlinks" aria-label="Course navigation">
+        <a href="#curriculum">Curriculum</a><a href="#labs">Troubleshooting</a><a href="#study">Study guide</a><a class="back" href="../../index.html">← All courses</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap" id="main">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="../../index.html">All courses</a><span aria-hidden="true">/</span><span aria-current="page">Networking</span></nav>
+    <section class="hero" aria-labelledby="course-title">
+      <div>
+        <div class="eyebrow"><span>Course 01</span> Linux · Cloud · DevOps · AI</div>
+        <h1 id="course-title">Networking</h1>
+        <h2>Start with two devices.<br><span>Understand the whole path.</span></h2>
+        <p class="lead">Learn how devices communicate, how addresses and subnets work, and how requests reach an application. Then use that understanding to investigate real problems in Linux, cloud, containers, and AI services.</p>
+        <div class="actions"><a class="button primary" id="start-lesson" href="lessons/01-what-is-a-network.html">Start Lesson 1 <span aria-hidden="true">→</span></a><a class="button" href="#curriculum">Explore the curriculum</a></div>
+        <p class="hero-note">No networking knowledge assumed. One concept at a time.</p>
+      </div>
+      <div class="path-card">
+        <div class="path-head"><span>Every request has a path</span><span>The course in one picture</span></div>
+        <svg class="path-map" viewBox="0 0 400 247" role="img" aria-labelledby="map-title map-desc">
+          <title id="map-title">An example request path</title>
+          <desc id="map-desc">A client sends a request through a gateway and a cloud network to an application. The application also needs a working response path. This is a simplified example; actual paths vary.</desc>
+          <defs>
+            <marker id="arrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="none" stroke="#b6d58a" stroke-width="1.1"/></marker>
+            <marker id="return-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="none" stroke="#76dcec" stroke-width="1.1"/></marker>
+          </defs>
+          <path class="map-path" d="M158 59H229" marker-end="url(#arrow)"/>
+          <path class="map-path" d="M286 92V145" marker-end="url(#arrow)"/>
+          <path class="map-path" d="M233 168H162" marker-end="url(#arrow)"/>
+          <g fill="none" stroke="#76dcec" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#return-arrow)">
+            <path d="M233 77H162"/><path d="M308 149V97"/><path d="M158 186H228"/>
+          </g>
+          <rect class="map-box" x="30" y="38" width="128" height="54" rx="12"/>
+          <text class="map-label" x="94" y="61" text-anchor="middle">Client</text><text class="map-sub" x="94" y="78" text-anchor="middle">creates a request</text>
+          <rect class="map-box" x="233" y="38" width="128" height="54" rx="12"/>
+          <text class="map-label" x="297" y="61" text-anchor="middle">Gateway</text><text class="map-sub" x="297" y="78" text-anchor="middle">forwards traffic</text>
+          <rect class="map-box" x="233" y="149" width="128" height="54" rx="12"/>
+          <text class="map-label" x="297" y="172" text-anchor="middle">Cloud network</text><text class="map-sub" x="297" y="189" text-anchor="middle">routes and access rules</text>
+          <rect class="map-box" x="30" y="149" width="128" height="54" rx="12"/>
+          <text class="map-label" x="94" y="172" text-anchor="middle">Application</text><text class="map-sub" x="94" y="189" text-anchor="middle">receives and responds</text>
+          <text class="map-sub" x="200" y="232" text-anchor="middle">Solid: request · Dashed: response · Example path</text>
+        </svg>
+        <p class="path-question"><strong>Keep asking:</strong> where does the request go, what could stop it, and how does the response get back?</p>
+      </div>
+    </section>
+    <div class="facts" aria-label="Course overview">
+      <div class="fact"><strong>14 modules</strong><span>A complete learning path</span></div>
+      <div class="fact"><strong>74 lessons</strong><span>From foundations to practice</span></div>
+      <div class="fact"><strong>Start from zero</strong><span>Terms explained before use</span></div>
+      <div class="fact"><strong>Troubleshooting</strong><span>Practice in every module</span></div>
+    </div>
+    <section class="section" aria-labelledby="outcomes-title">
+      <div class="section-head"><div><div class="section-label">What you will learn to do</div><h2 id="outcomes-title">Understand. Trace. Troubleshoot.</h2></div><p>Build a mental model first. Use diagrams and experiments to connect that model to real systems.</p></div>
+      <div class="outcomes">
+        <article class="outcome"><span class="icon" aria-hidden="true">⌁</span><h3>Read and plan networks</h3><p>Explain interfaces and IP addresses. Work with CIDR, subnet ranges, VLSM, and address plans.</p></article>
+        <article class="outcome"><span class="icon" aria-hidden="true">↗</span><h3>Follow a complete request</h3><p>Connect DNS, routes, ports, TLS, proxies, and application behaviour into one traffic path.</p></article>
+        <article class="outcome"><span class="icon" aria-hidden="true">⌕</span><h3>Diagnose with evidence</h3><p>Use Linux tools and cloud traffic evidence to test a cause and explain a justified conclusion.</p></article>
+      </div>
+    </section>
+    <section class="section" id="curriculum" aria-labelledby="curriculum-title">
+      <div class="section-head"><div><div class="section-label">The complete course map</div><h2 id="curriculum-title">Your networking curriculum</h2></div><p>Follow the order from the beginning. Open a module to see its lessons, learning outcome, and practical exercise.</p></div>
+      <div class="curriculum-layout">
+        <aside class="course-aside" aria-label="Curriculum stages">
+          <h3>Three stages of learning</h3>
+          <nav class="phase-nav" aria-label="Jump to a course stage">
+            <a href="#foundations">01 · Understand the foundations<small>Modules 01–05</small></a>
+            <a href="#traffic">02 · Follow the traffic<small>Modules 06–09</small></a>
+            <a href="#operations">03 · Operate and troubleshoot<small>Modules 10–14</small></a>
+          </nav>
+          <p class="aside-note"><strong>Study one lesson at a time.</strong> Read, draw the idea, try the demo, and explain the result in your own words before moving on.</p>
+        </aside>
+        <div class="curriculum-main">
+          <div class="toolbar">
+            <label class="sr-only" for="module-search">Search modules and lessons</label>
+            <input class="search" id="module-search" type="search" placeholder="Find a topic: CIDR, ports, DNS…" autocomplete="off" aria-controls="course-modules">
+            <button class="button" id="expand-all" type="button">Expand all</button>
+            <button class="button" id="collapse-all" type="button">Collapse all</button>
+          </div>
+          <p class="result-count" id="result-count" aria-live="polite">14 modules · 74 lessons</p>
+          <div id="course-modules">
+            <div class="phase-group">
+              <h3 class="phase-heading" id="foundations">01 · Understand the foundations</h3>
+              <details class="module" id="module-01" open>
+                <summary>
+                  <span class="module-number">01</span>
+                  <span class="module-heading"><span class="module-name">Network foundations</span><span class="module-sub">Devices, connections, and the reason networks exist</span></span>
+                  <span class="module-meta">5 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Explain what connects two devices, what travels between them, and why communication can fail.</p>
+                  <ol class="lessons" start="1">
+                    <li class="lesson" id="lesson-01" value="1">
+                      <span class="lesson-number" aria-hidden="true">01</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/01-what-is-a-network.html">What is a network?<span class="read-label">Read lesson →</span></a><p>Devices exchange data through a path. Explore local communication and diagnose a broken connection.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-02" value="2">
+                      <span class="lesson-number" aria-hidden="true">02</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/02-devices-links-and-network-paths.html">Devices, links, and network paths<span class="read-label">Read lesson →</span></a><p>Identify endpoints, switches, routers, access points, cables, and wireless links.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-03" value="3">
+                      <span class="lesson-number" aria-hidden="true">03</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/03-clients-servers-and-services.html">Clients, servers, and services<span class="read-label">Read lesson →</span></a><p>Separate the device from the application. Follow a request and its response.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-04" value="4">
+                      <span class="lesson-number" aria-hidden="true">04</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/04-data-packets-and-protocols.html">Data, packets, and protocols<span class="read-label">Read lesson →</span></a><p>Understand why data is divided into messages and packets, and why devices need shared rules.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-05" value="5">
+                      <span class="lesson-number" aria-hidden="true">05</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/05-local-networks-the-internet-and-performance.html">Local networks, the Internet, and performance<span class="read-label">Read lesson →</span></a><p>Compare a local path with an Internet path. Build first mental models for latency and bandwidth.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Draw a laptop, a local service, and an Internet service. Trace each path and explain what changes when one connection breaks.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-02">
+                <summary>
+                  <span class="module-number">02</span>
+                  <span class="module-heading"><span class="module-name">Interfaces and IP addresses</span><span class="module-sub">How a device connects and how an interface gets an address</span></span>
+                  <span class="module-meta">5 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Distinguish a machine, an interface, and an IP address, including several addresses on one interface.</p>
+                  <ol class="lessons" start="6">
+                    <li class="lesson" id="lesson-06" value="6">
+                      <span class="lesson-number" aria-hidden="true">06</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/06-network-cards-and-network-interfaces.html">Network cards and network interfaces<span class="read-label">Read lesson →</span></a><p>Connect the physical network adapter to the interface that the operating system exposes.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-07" value="7">
+                      <span class="lesson-number" aria-hidden="true">07</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/07-physical-virtual-and-loopback-interfaces.html">Physical, virtual, and loopback interfaces<span class="read-label">Read lesson →</span></a><p>Recognise Ethernet, Wi-Fi, virtual adapters, bridges, and the local loopback interface.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-08" value="8">
+                      <span class="lesson-number" aria-hidden="true">08</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/08-what-an-ip-address-identifies.html">What an IP address identifies<span class="read-label">Read lesson →</span></a><p>Understand addresses on interfaces, multiple interfaces on one host, and multiple addresses on one interface.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-09" value="9">
+                      <span class="lesson-number" aria-hidden="true">09</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/09-ipv4-ipv6-and-address-assignment.html">IPv4, IPv6, and address assignment<span class="read-label">Read lesson →</span></a><p>Compare the two address families and introduce static and automatic address configuration.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-10" value="10">
+                      <span class="lesson-number" aria-hidden="true">10</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/10-read-your-first-linux-network-output.html">Read your first Linux network output<span class="read-label">Read lesson →</span></a><p>Interpret interface names, interface state, addresses, and prefixes in ip output.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Read ip -br link and ip -br addr on a lab host. List each interface, its state, and every assigned address.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-03">
+                <summary>
+                  <span class="module-number">03</span>
+                  <span class="module-heading"><span class="module-name">Address structure and address types</span><span class="module-sub">Read an address and understand its scope</span></span>
+                  <span class="module-meta">4 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Explain the structure of IPv4 and recognise why public, private, loopback, and link-local addresses behave differently.</p>
+                  <ol class="lessons" start="11">
+                    <li class="lesson" id="lesson-11" value="11">
+                      <span class="lesson-number" aria-hidden="true">11</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/11-ipv4-octets-bits-and-binary.html">IPv4 octets, bits, and binary<span class="read-label">Read lesson →</span></a><p>Build an IPv4 address from four octets. Convert between small binary values and decimal numbers.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-12" value="12">
+                      <span class="lesson-number" aria-hidden="true">12</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/12-public-and-private-addresses.html">Public and private addresses<span class="read-label">Read lesson →</span></a><p>Understand private address space, public reachability, and why an address alone does not guarantee access.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-13" value="13">
+                      <span class="lesson-number" aria-hidden="true">13</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/13-loopback-link-local-and-special-addresses.html">Loopback, link-local, and special addresses<span class="read-label">Read lesson →</span></a><p>Explore 127.0.0.1, 0.0.0.0, link-local ranges, and cloud metadata endpoints in context.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-14" value="14">
+                      <span class="lesson-number" aria-hidden="true">14</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/14-unicast-broadcast-multicast-and-ipv6-types.html">Unicast, broadcast, multicast, and IPv6 types<span class="read-label">Read lesson →</span></a><p>Compare ways to address receivers and introduce IPv6 global, unique-local, and link-local addresses.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Classify a set of example addresses. Explain which addresses refer to this host, a local link, or another network.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-04">
+                <summary>
+                  <span class="module-number">04</span>
+                  <span class="module-heading"><span class="module-name">Subnet masks and CIDR</span><span class="module-sub">Understand the boundary between network bits and host bits</span></span>
+                  <span class="module-meta">4 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Read a prefix such as /24 or /28, convert it to a mask, and explain what the prefix describes.</p>
+                  <ol class="lessons" start="15">
+                    <li class="lesson" id="lesson-15" value="15">
+                      <span class="lesson-number" aria-hidden="true">15</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/15-why-a-network-needs-a-prefix.html">Why a network needs a prefix<span class="read-label">Read lesson →</span></a><p>Separate an individual address from the address block it belongs to.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-16" value="16">
+                      <span class="lesson-number" aria-hidden="true">16</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/16-subnet-masks-and-network-bits.html">Subnet masks and network bits<span class="read-label">Read lesson →</span></a><p>Use binary masks to reveal the network portion of an IPv4 address.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-17" value="17">
+                      <span class="lesson-number" aria-hidden="true">17</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/17-cidr-notation-and-prefix-lengths.html">CIDR notation and prefix lengths<span class="read-label">Read lesson →</span></a><p>Connect /24, /28, and other prefixes to masks, block sizes, and same-subnet comparisons.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-18" value="18">
+                      <span class="lesson-number" aria-hidden="true">18</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/18-ipv6-prefixes-and-notation.html">IPv6 prefixes and notation<span class="read-label">Read lesson →</span></a><p>Read compressed IPv6 notation and understand how prefixes work with 128-bit addresses.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Change a prefix in a visual model. Predict the address block size and test whether two IPv4 addresses share a prefix.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-05">
+                <summary>
+                  <span class="module-number">05</span>
+                  <span class="module-heading"><span class="module-name">Subnetting, VLSM, and address planning</span><span class="module-sub">Calculate address ranges and design a usable address plan</span></span>
+                  <span class="module-meta">6 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Choose subnet sizes, calculate ranges, and allocate address space without overlap.</p>
+                  <ol class="lessons" start="19">
+                    <li class="lesson" id="lesson-19" value="19">
+                      <span class="lesson-number" aria-hidden="true">19</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/19-network-addresses-broadcast-addresses-and-host-ranges.html">Network addresses, broadcast addresses, and host ranges<span class="read-label">Read lesson →</span></a><p>Find the boundaries of a conventional IPv4 subnet and distinguish total addresses from host addresses.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-20" value="20">
+                      <span class="lesson-number" aria-hidden="true">20</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/20-subnet-boundaries-and-block-sizes.html">Subnet boundaries and block sizes<span class="read-label">Read lesson →</span></a><p>Calculate ranges with a repeatable method and check addresses near a boundary.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-21" value="21">
+                      <span class="lesson-number" aria-hidden="true">21</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/21-split-a-network-into-equal-subnets.html">Split a network into equal subnets<span class="read-label">Read lesson →</span></a><p>Borrow prefix bits, calculate the new ranges, and verify that the subnets fit.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-22" value="22">
+                      <span class="lesson-number" aria-hidden="true">22</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/22-vlsm-different-sizes-for-different-needs.html">VLSM: different sizes for different needs<span class="read-label">Read lesson →</span></a><p>Allocate larger subnets first and use Variable Length Subnet Masking to fit mixed requirements.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-23" value="23">
+                      <span class="lesson-number" aria-hidden="true">23</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/23-31-32-and-reserved-addresses.html">/31, /32, and reserved addresses<span class="read-label">Read lesson →</span></a><p>Understand point-to-point and host-prefix cases, then account for provider-specific reserved addresses.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-24" value="24">
+                      <span class="lesson-number" aria-hidden="true">24</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/24-overlaps-summaries-and-a-complete-address-plan.html">Overlaps, summaries, and a complete address plan<span class="read-label">Read lesson →</span></a><p>Detect overlap, introduce route summarisation, and leave room for future growth.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Divide an example network into application, database, and management subnets with different capacity needs. Explain each allocation.</p></div>
+                </div>
+              </details>
+            </div>
+            <div class="phase-group">
+              <h3 class="phase-heading" id="traffic">02 · Follow the traffic</h3>
+              <details class="module" id="module-06">
+                <summary>
+                  <span class="module-number">06</span>
+                  <span class="module-heading"><span class="module-name">Local network delivery</span><span class="module-sub">MAC addresses, frames, neighbours, and network layers</span></span>
+                  <span class="module-meta">5 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Explain how a host delivers traffic to the next device on its local link.</p>
+                  <ol class="lessons" start="25">
+                    <li class="lesson" id="lesson-25" value="25">
+                      <span class="lesson-number" aria-hidden="true">25</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/25-ethernet-frames-mac-addresses-and-switches.html">Ethernet frames, MAC addresses, and switches<span class="read-label">Read lesson →</span></a><p>Distinguish IP delivery from local frame delivery and see how a switch learns where to forward frames.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-26" value="26">
+                      <span class="lesson-number" aria-hidden="true">26</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/26-arp-and-the-ipv4-neighbour-cache.html">ARP and the IPv4 neighbour cache<span class="read-label">Read lesson →</span></a><p>Follow an address-resolution exchange and interpret neighbour entries and states.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-27" value="27">
+                      <span class="lesson-number" aria-hidden="true">27</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/27-local-links-vlans-and-broadcast-domains.html">Local links, VLANs, and broadcast domains<span class="read-label">Read lesson →</span></a><p>Understand which devices share a local link and why a router is needed between networks.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-28" value="28">
+                      <span class="lesson-number" aria-hidden="true">28</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/28-ipv6-neighbor-discovery.html">IPv6 Neighbor Discovery<span class="read-label">Read lesson →</span></a><p>Compare the purpose of IPv6 neighbour discovery with the IPv4 mechanisms already learned.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-29" value="29">
+                      <span class="lesson-number" aria-hidden="true">29</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/29-osi-tcp-ip-and-encapsulation.html">OSI, TCP/IP, and encapsulation<span class="read-label">Read lesson →</span></a><p>Follow application data through transport, network, and link functions without assigning each device to only one layer.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Compare ip route get with ip neigh. Explain why traffic to a remote IP uses the local gateway as its next link-layer neighbour.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-07">
+                <summary>
+                  <span class="module-number">07</span>
+                  <span class="module-heading"><span class="module-name">Routing between networks</span><span class="module-sub">Choose the path, follow the return, and understand translation</span></span>
+                  <span class="module-meta">6 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Predict a host&#x27;s selected route and explain gateways, return paths, NAT, and packet-size problems.</p>
+                  <ol class="lessons" start="30">
+                    <li class="lesson" id="lesson-30" value="30">
+                      <span class="lesson-number" aria-hidden="true">30</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/30-gateways-and-ip-forwarding.html">Gateways and IP forwarding<span class="read-label">Read lesson →</span></a><p>Follow a packet beyond the local network and distinguish host routing from router forwarding.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-31" value="31">
+                      <span class="lesson-number" aria-hidden="true">31</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/31-routing-tables-and-longest-prefix-matching.html">Routing tables and longest-prefix matching<span class="read-label">Read lesson →</span></a><p>Compare connected, specific, and default routes and choose the most specific matching prefix.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-32" value="32">
+                      <span class="lesson-number" aria-hidden="true">32</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/32-source-addresses-and-return-paths.html">Source addresses and return paths<span class="read-label">Read lesson →</span></a><p>Identify the outgoing interface and selected source IP, then check how the response finds its way back.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-33" value="33">
+                      <span class="lesson-number" aria-hidden="true">33</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/33-nat-snat-dnat-and-port-translation.html">NAT, SNAT, DNAT, and port translation<span class="read-label">Read lesson →</span></a><p>Track which addresses or ports change and understand why connection state matters.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-34" value="34">
+                      <span class="lesson-number" aria-hidden="true">34</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/34-mtu-fragmentation-and-path-mtu-discovery.html">MTU, fragmentation, and Path MTU Discovery<span class="read-label">Read lesson →</span></a><p>Explain packet-size limits and investigate why small transfers may work while larger ones fail.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-35" value="35">
+                      <span class="lesson-number" aria-hidden="true">35</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/35-icmp-ping-and-route-tracing.html">ICMP, ping, and route tracing<span class="read-label">Read lesson →</span></a><p>Use network control messages as evidence and understand the limits of ping and traceroute results.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Read a routing table and use ip route get for several destinations. Draw the forward and return paths and locate a missing route.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-08">
+                <summary>
+                  <span class="module-number">08</span>
+                  <span class="module-heading"><span class="module-name">Ports, sockets, TCP, and UDP</span><span class="module-sub">Get traffic to the correct application</span></span>
+                  <span class="module-meta">6 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Interpret a listener or connection and separate address, protocol, port, and process.</p>
+                  <ol class="lessons" start="36">
+                    <li class="lesson" id="lesson-36" value="36">
+                      <span class="lesson-number" aria-hidden="true">36</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/36-why-applications-need-port-numbers.html">Why applications need port numbers<span class="read-label">Read lesson →</span></a><p>Separate the host address from the application endpoint and distinguish source and destination ports.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-37" value="37">
+                      <span class="lesson-number" aria-hidden="true">37</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/37-tcp-connections-and-reliable-delivery.html">TCP: connections and reliable delivery<span class="read-label">Read lesson →</span></a><p>Follow the handshake, sequence numbers, acknowledgements, retransmissions, and connection close.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-38" value="38">
+                      <span class="lesson-number" aria-hidden="true">38</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/38-udp-independent-datagrams.html">UDP: independent datagrams<span class="read-label">Read lesson →</span></a><p>Understand a connectionless transport and compare its trade-offs with TCP.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-39" value="39">
+                      <span class="lesson-number" aria-hidden="true">39</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/39-sockets-ephemeral-ports-and-the-five-tuple.html">Sockets, ephemeral ports, and the five-tuple<span class="read-label">Read lesson →</span></a><p>Identify a flow by its addresses, ports, and transport protocol, and understand client-side port selection.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-40" value="40">
+                      <span class="lesson-number" aria-hidden="true">40</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/40-bind-addresses-and-listening-services.html">Bind addresses and listening services<span class="read-label">Read lesson →</span></a><p>Compare loopback, a specific local address, and wildcard listeners, including IPv4 and IPv6 context.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-41" value="41">
+                      <span class="lesson-number" aria-hidden="true">41</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/41-connection-refused-timeout-reset-and-port-conflicts.html">Connection refused, timeout, reset, and port conflicts<span class="read-label">Read lesson →</span></a><p>Turn a connection symptom into testable possibilities without treating one message as a complete diagnosis.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Run a local service, inspect it with ss, compare loopback and interface listeners, and investigate a deliberate port conflict.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-09">
+                <summary>
+                  <span class="module-number">09</span>
+                  <span class="module-heading"><span class="module-name">DNS and application protocols</span><span class="module-sub">From a hostname to an application response</span></span>
+                  <span class="module-meta">6 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Separate name lookup, connection setup, TLS negotiation, and application behaviour.</p>
+                  <ol class="lessons" start="42">
+                    <li class="lesson" id="lesson-42" value="42">
+                      <span class="lesson-number" aria-hidden="true">42</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/42-dns-records-resolvers-and-lookup-flow.html">DNS records, resolvers, and lookup flow<span class="read-label">Read lesson →</span></a><p>Explore A, AAAA, CNAME, PTR, and other common records, caching, and host lookup order.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-43" value="43">
+                      <span class="lesson-number" aria-hidden="true">43</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/43-dhcp-and-automatic-configuration.html">DHCP and automatic configuration<span class="read-label">Read lesson →</span></a><p>Follow address configuration and distinguish an address lease from routes and resolver settings.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-44" value="44">
+                      <span class="lesson-number" aria-hidden="true">44</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/44-http-requests-responses-and-redirects.html">HTTP requests, responses, and redirects<span class="read-label">Read lesson →</span></a><p>Read methods, headers, status codes, and redirects while keeping transport reachability separate.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-45" value="45">
+                      <span class="lesson-number" aria-hidden="true">45</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/45-https-tls-certificates-and-sni.html">HTTPS, TLS, certificates, and SNI<span class="read-label">Read lesson →</span></a><p>Understand encryption, identity checks, names, trust chains, and the TLS handshake.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-46" value="46">
+                      <span class="lesson-number" aria-hidden="true">46</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/46-ssh-connections-and-authentication.html">SSH connections and authentication<span class="read-label">Read lesson →</span></a><p>Separate a failed network connection from a failed SSH login and understand tunnelling basics.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-47" value="47">
+                      <span class="lesson-number" aria-hidden="true">47</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/47-proxies-reverse-proxies-and-load-balancers.html">Proxies, reverse proxies, and load balancers<span class="read-label">Read lesson →</span></a><p>Draw the connections an intermediary makes and distinguish pass-through from termination.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Follow a request with getent, dig, and curl -v. Identify a DNS result, a connection, a TLS exchange, and an HTTP response.</p></div>
+                </div>
+              </details>
+            </div>
+            <div class="phase-group">
+              <h3 class="phase-heading" id="operations">03 · Operate and troubleshoot</h3>
+              <details class="module" id="module-10">
+                <summary>
+                  <span class="module-number">10</span>
+                  <span class="module-heading"><span class="module-name">Linux networking in practice</span><span class="module-sub">Use host evidence to test one possible cause at a time</span></span>
+                  <span class="module-meta">5 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Build a small, repeatable command workflow for host, route, resolver, service, and packet investigation.</p>
+                  <ol class="lessons" start="48">
+                    <li class="lesson" id="lesson-48" value="48">
+                      <span class="lesson-number" aria-hidden="true">48</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/48-inspect-a-linux-host-links-addresses-routes-and-neighbours.html">Inspect a Linux host: links, addresses, routes, and neighbours<span class="read-label">Read lesson →</span></a><p>Read ip link, ip addr, ip route, and ip neigh as connected pieces of evidence.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-49" value="49">
+                      <span class="lesson-number" aria-hidden="true">49</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/49-inspect-services-and-test-connections.html">Inspect services and test connections<span class="read-label">Read lesson →</span></a><p>Use ss, curl, and TCP probes to compare a local service with a remote connection attempt.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-50" value="50">
+                      <span class="lesson-number" aria-hidden="true">50</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/50-troubleshoot-name-resolution-and-tls.html">Troubleshoot name resolution and TLS<span class="read-label">Read lesson →</span></a><p>Compare getent, dig, resolver settings, curl output, and openssl s_client evidence.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-51" value="51">
+                      <span class="lesson-number" aria-hidden="true">51</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/51-capture-and-read-packets-with-tcpdump.html">Capture and read packets with tcpdump<span class="read-label">Read lesson →</span></a><p>Choose an interface and filter, then identify handshakes, retries, resets, and missing responses.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-52" value="52">
+                      <span class="lesson-number" aria-hidden="true">52</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/52-host-configuration-firewalls-and-network-logs.html">Host configuration, firewalls, and network logs<span class="read-label">Read lesson →</span></a><p>Understand persistent configuration, host filtering, connection tracking, and safe diagnosis before changes.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Diagnose broken lab examples with a hypothesis, the command used to test it, the observed output, and the next action.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-11">
+                <summary>
+                  <span class="module-number">11</span>
+                  <span class="module-heading"><span class="module-name">Cloud networking</span><span class="module-sub">Apply the model to AWS VPC and OCI VCN paths</span></span>
+                  <span class="module-meta">6 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Draw a cloud request path and verify routes, traffic rules, listeners, and backends at each step.</p>
+                  <ol class="lessons" start="53">
+                    <li class="lesson" id="lesson-53" value="53">
+                      <span class="lesson-number" aria-hidden="true">53</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/53-vpcs-vcns-subnets-and-virtual-interfaces.html">VPCs, VCNs, subnets, and virtual interfaces<span class="read-label">Read lesson →</span></a><p>Map the concepts already learned to cloud network boundaries, instances, and attached interfaces.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-54" value="54">
+                      <span class="lesson-number" aria-hidden="true">54</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/54-cloud-routes-internet-gateways-and-outbound-access.html">Cloud routes, Internet gateways, and outbound access<span class="read-label">Read lesson →</span></a><p>Compare public and private subnet patterns and follow Internet, NAT, and service-access paths.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-55" value="55">
+                      <span class="lesson-number" aria-hidden="true">55</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/55-security-groups-nsgs-security-lists-and-acls.html">Security groups, NSGs, security lists, and ACLs<span class="read-label">Read lesson →</span></a><p>Reason about direction, state, rule scope, and return traffic using each provider&#x27;s model.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-56" value="56">
+                      <span class="lesson-number" aria-hidden="true">56</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/56-load-balancers-nlbs-listeners-and-health-checks.html">Load balancers, NLBs, listeners, and health checks<span class="read-label">Read lesson →</span></a><p>Separate the user connection from backend traffic and understand what a healthy check actually proves.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-57" value="57">
+                      <span class="lesson-number" aria-hidden="true">57</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/57-private-endpoints-cloud-dns-and-metadata-access.html">Private endpoints, cloud DNS, and metadata access<span class="read-label">Read lesson →</span></a><p>Follow private service connections, name resolution, and instance-local metadata paths.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-58" value="58">
+                      <span class="lesson-number" aria-hidden="true">58</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/58-peering-vpns-and-hybrid-connectivity.html">Peering, VPNs, and hybrid connectivity<span class="read-label">Read lesson →</span></a><p>Draw connected-network paths and check prefixes, routes, access rules, and responses in both directions.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Trace a client request through a cloud load balancer to a private backend. Document the source, destination, port, route, and access rule for each connection.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-12">
+                <summary>
+                  <span class="module-number">12</span>
+                  <span class="module-heading"><span class="module-name">Containers and Kubernetes networking</span><span class="module-sub">Follow traffic through namespaces, Pods, and Services</span></span>
+                  <span class="module-meta">6 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Explain where container and cluster traffic goes and identify the boundary where a failure starts.</p>
+                  <ol class="lessons" start="59">
+                    <li class="lesson" id="lesson-59" value="59">
+                      <span class="lesson-number" aria-hidden="true">59</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/59-network-namespaces-veth-pairs-and-bridges.html">Network namespaces, veth pairs, and bridges<span class="read-label">Read lesson →</span></a><p>Build the mental model for an isolated network stack connected to the host.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-60" value="60">
+                      <span class="lesson-number" aria-hidden="true">60</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/60-container-ports-and-host-port-publishing.html">Container ports and host port publishing<span class="read-label">Read lesson →</span></a><p>Distinguish listening inside a container from exposing a port on the host.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-61" value="61">
+                      <span class="lesson-number" aria-hidden="true">61</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/61-pods-node-networks-and-cni.html">Pods, node networks, and CNI<span class="read-label">Read lesson →</span></a><p>Follow Pod-to-Pod and Pod-to-external traffic and understand the role of a network plugin.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-62" value="62">
+                      <span class="lesson-number" aria-hidden="true">62</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/62-services-endpoints-and-cluster-dns.html">Services, endpoints, and cluster DNS<span class="read-label">Read lesson →</span></a><p>Map a service name to virtual service access and the Pods that receive the traffic.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-63" value="63">
+                      <span class="lesson-number" aria-hidden="true">63</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/63-ingress-gateway-and-external-entry-paths.html">Ingress, Gateway, and external entry paths<span class="read-label">Read lesson →</span></a><p>Follow traffic from outside the cluster through a controller or gateway to an application.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-64" value="64">
+                      <span class="lesson-number" aria-hidden="true">64</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/64-network-policies-and-egress-troubleshooting.html">Network policies and egress troubleshooting<span class="read-label">Read lesson →</span></a><p>Check permitted traffic, DNS access, external dependencies, and the path back to a Pod.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Compare a container listener, a published host port, a Pod address, and a Service endpoint. Draw the actual connections for each path.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-13">
+                <summary>
+                  <span class="module-number">13</span>
+                  <span class="module-heading"><span class="module-name">DevOps and AI application networking</span><span class="module-sub">Connect delivery pipelines, APIs, models, and data services</span></span>
+                  <span class="module-meta">5 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Trace an automation or AI request across its dependencies and distinguish connection delay from application delay.</p>
+                  <ol class="lessons" start="65">
+                    <li class="lesson" id="lesson-65" value="65">
+                      <span class="lesson-number" aria-hidden="true">65</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/65-ci-cd-dependencies-registries-and-webhooks.html">CI/CD dependencies, registries, and webhooks<span class="read-label">Read lesson →</span></a><p>Follow a runner to source control, package repositories, image registries, and deployment endpoints.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-66" value="66">
+                      <span class="lesson-number" aria-hidden="true">66</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/66-apis-model-endpoints-and-vector-databases.html">APIs, model endpoints, and vector databases<span class="read-label">Read lesson →</span></a><p>Separate each connection in an application-to-model-to-data path, including private access and proxies.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-67" value="67">
+                      <span class="lesson-number" aria-hidden="true">67</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/67-streaming-with-sse-websockets-and-grpc.html">Streaming with SSE, WebSockets, and gRPC<span class="read-label">Read lesson →</span></a><p>Compare short requests with long-lived connections and understand the role of intermediaries.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-68" value="68">
+                      <span class="lesson-number" aria-hidden="true">68</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/68-timeouts-retries-connection-pools-and-keep-alive.html">Timeouts, retries, connection pools, and keep-alive<span class="read-label">Read lesson →</span></a><p>Locate timeout boundaries and understand how retry behaviour can amplify a dependency failure.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-69" value="69">
+                      <span class="lesson-number" aria-hidden="true">69</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/69-latency-throughput-and-network-observability.html">Latency, throughput, and network observability<span class="read-label">Read lesson →</span></a><p>Break down request timing, compare bandwidth with application throughput, and connect logs, metrics, and traces.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Draw a CI job and an AI application as dependency maps. Add a failure at one connection and explain which evidence would locate it.</p></div>
+                </div>
+              </details>
+              <details class="module" id="module-14">
+                <summary>
+                  <span class="module-number">14</span>
+                  <span class="module-heading"><span class="module-name">Troubleshooting and design capstone</span><span class="module-sub">Combine the complete model and explain your evidence</span></span>
+                  <span class="module-meta">5 lessons</span><span class="plus" aria-hidden="true">+</span>
+                </summary>
+                <div class="module-body">
+                  <p class="module-intro"><strong>Learning outcome:</strong> Investigate an unfamiliar network problem, justify the diagnosis, and present a clear network design.</p>
+                  <ol class="lessons" start="70">
+                    <li class="lesson" id="lesson-70" value="70">
+                      <span class="lesson-number" aria-hidden="true">70</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/70-a-repeatable-network-troubleshooting-method.html">A repeatable network troubleshooting method<span class="read-label">Read lesson →</span></a><p>Define the symptom, source, destination, protocol, port, expected path, and the next useful test.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-71" value="71">
+                      <span class="lesson-number" aria-hidden="true">71</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/71-case-study-the-address-or-route-is-wrong.html">Case study: the address or route is wrong<span class="read-label">Read lesson →</span></a><p>Investigate an incorrect prefix, overlap, missing gateway, wrong route, and missing return path.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-72" value="72">
+                      <span class="lesson-number" aria-hidden="true">72</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/72-case-study-dns-port-tls-or-application-failure.html">Case study: DNS, port, TLS, or application failure<span class="read-label">Read lesson →</span></a><p>Compare similar user symptoms and use layer-specific evidence to find different causes.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-73" value="73">
+                      <span class="lesson-number" aria-hidden="true">73</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/73-case-study-healthy-backend-failing-user-request.html">Case study: healthy backend, failing user request<span class="read-label">Read lesson →</span></a><p>Check the full cloud or cluster entry path, intermittent behaviour, and what health checks miss.</p></div>
+                    </li>
+                    <li class="lesson" id="lesson-74" value="74">
+                      <span class="lesson-number" aria-hidden="true">74</span>
+                      <div class="lesson-copy"><a class="lesson-title" href="lessons/74-design-diagnose-and-document-a-complete-system.html">Design, diagnose, and document a complete system<span class="read-label">Read lesson →</span></a><p>Present an address plan, request-path diagram, troubleshooting record, and a justified corrective action.</p></div>
+                    </li>
+                  </ol>
+                  <div class="module-lab"><strong>Practical exercise</strong><p>Design a small cloud application with separate address ranges, an entry point, private backends, and an API dependency. Diagnose injected failures and write a short incident report.</p></div>
+                </div>
+              </details>
+            </div>
+          </div>
+          <div class="empty" id="empty-state" hidden><strong>No matching lesson</strong><p>Try a term such as “subnet”, “ports”, “DNS”, or “cloud”.</p><button class="button" id="clear-search" type="button">Clear search</button></div>
+          <noscript><p>You can open every module individually. Enable JavaScript to use search and the expand or collapse controls.</p></noscript>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="labs" aria-labelledby="labs-title">
+      <div class="section-head"><div><div class="section-label">Learn through investigation</div><h2 id="labs-title">Practical troubleshooting, throughout.</h2></div><p>Every module includes an exercise. These recurring cases connect a real symptom to the concept and evidence behind it.</p></div>
+      <div class="lab-grid">
+        <article class="lab-card"><span class="case">Addressing and routes</span><h3>“The server cannot reach the destination.”</h3><p>Check the interface, address, prefix, selected route, gateway, and response path.</p><div class="chips"><code>ip -br addr</code><code>ip route get</code><code>ip neigh</code></div></article>
+        <article class="lab-card"><span class="case">Name resolution</span><h3>“The hostname does not resolve.”</h3><p>Compare the host lookup with DNS records, resolver configuration, and the intended destination.</p><div class="chips"><code>getent hosts</code><code>dig</code><code>resolver settings</code></div></article>
+        <article class="lab-card"><span class="case">Ports and listeners</span><h3>“The process runs, but clients cannot connect.”</h3><p>Inspect the listening address and port. Check the path and look for a competing process.</p><div class="chips"><code>ss -lntp</code><code>TCP probes</code><code>service logs</code></div></article>
+        <article class="lab-card"><span class="case">HTTPS and applications</span><h3>“The connection works, but HTTPS fails.”</h3><p>Separate TLS negotiation, certificate validation, HTTP redirects, and application errors.</p><div class="chips"><code>curl -v</code><code>openssl s_client</code><code>HTTP status</code></div></article>
+        <article class="lab-card"><span class="case">Cloud and Kubernetes</span><h3>“The backend is healthy, but users fail.”</h3><p>Trace the user path separately from health checks. Inspect listeners, access rules, and endpoints.</p><div class="chips"><code>route tables</code><code>backend health</code><code>Service endpoints</code></div></article>
+        <article class="lab-card"><span class="case">AI and API dependencies</span><h3>“The request starts, then times out.”</h3><p>Break timing into name lookup, connection, TLS, response, and streaming across each dependency.</p><div class="chips"><code>curl timings</code><code>request traces</code><code>proxy logs</code></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="lesson-format" aria-labelledby="format-title">
+      <div class="section-head"><div><div class="section-label">One idea, several ways to understand it</div><h2 id="format-title">Inside each lesson</h2></div><p>Detailed notes form the core. Diagrams, experiments, and visual explanations turn the notes into understanding.</p></div>
+      <div class="format-grid">
+        <article class="format"><span class="step">01 / READ</span><h3>Clear technical English</h3><p>Defined terms, short explanations, worked examples, mental models, and common mistakes.</p></article>
+        <article class="format"><span class="step">02 / SEE</span><h3>Diagrams</h3><p>Labelled devices, boundaries, and paths. See what changes at each step.</p></article>
+        <article class="format"><span class="step">03 / TRY</span><h3>Interactive HTML demos</h3><p>Change an address, prefix, connection, or rule and observe the result in a browser model.</p></article>
+        <article class="format"><span class="step">04 / PRACTISE</span><h3>Practical troubleshooting</h3><p>Apply the idea in a lab, inspect a failure, and explain the evidence behind your diagnosis.</p></article>
+      </div>
+      <p class="practice-note"><strong>Practice completes the lesson.</strong> Apply the concept to a Linux or cloud example, investigate a relevant failure, and answer a few questions in your own words.</p>
+    </section>
+
+    <section class="section" id="study" aria-labelledby="study-title">
+      <div class="section-head"><div><div class="section-label">Make the understanding stick</div><h2 id="study-title">A simple way to study and take notes</h2></div><p>Use an hour as a guide. Repeat a concept when needed; the goal is to explain and apply it.</p></div>
+      <div class="study-grid">
+        <article class="study-card"><h3>One focused hour</h3><ol class="routine"><li><strong>20 min</strong><span>Read the explanation and work through an example.</span></li><li><strong>15 min</strong><span>Draw the diagram and try the interactive demo.</span></li><li><strong>15 min</strong><span>Run the exercise or investigate a failure scenario.</span></li><li><strong>10 min</strong><span>Write what you learned and list your questions.</span></li></ol><p class="study-foot">Continue with the same lesson if the model is still unclear.</p></article>
+        <article class="study-card"><h3>Your note for each lesson</h3><ol class="note-prompts"><li>What problem does this concept solve?</li><li>How does it work, in my own words?</li><li>Can I draw and explain one example?</li><li>What did I change, and what happened?</li><li>What evidence would help me diagnose a failure?</li><li>What is still unclear?</li></ol><p class="study-foot">For a troubleshooting note, record the symptom → hypothesis → test → evidence → conclusion.</p></article>
+      </div>
+    </section>
+    <section class="final-cta" aria-labelledby="begin-title"><div><h2 id="begin-title">Begin with the simplest question.</h2><p>What is a network, and what makes communication possible?</p></div><a class="button primary" href="lessons/01-what-is-a-network.html">Open Lesson 1 <span aria-hidden="true">→</span></a></section>
+    <footer class="footer"><a href="../../index.html">← Back to all courses</a><span>DevOps Learning Lab / Networking</span><a href="#main">Back to top ↑</a></footer>
+  </main>
+  <script>
+    (() => {
+      'use strict';
+      const modules = [...document.querySelectorAll('details.module')];
+      const groups = [...document.querySelectorAll('.phase-group')];
+      const lessons = [...document.querySelectorAll('.lesson')];
+      const search = document.getElementById('module-search');
+      const count = document.getElementById('result-count');
+      const empty = document.getElementById('empty-state');
+      let savedOpenState = null;
+
+      function filterLessons() {
+        const query = search.value.trim().toLowerCase();
+        if (query && savedOpenState === null) {
+          savedOpenState = new Map(modules.map(module => [module, module.open]));
+        }
+        let visibleLessons = 0;
+        let visibleModules = 0;
+        modules.forEach(module => {
+          const moduleMatch = module.querySelector('summary').textContent.toLowerCase().includes(query);
+          let matches = 0;
+          module.querySelectorAll('.lesson').forEach(lesson => {
+            const match = !query || moduleMatch || lesson.textContent.toLowerCase().includes(query);
+            lesson.hidden = !match;
+            if (match) matches += 1;
+          });
+          module.hidden = matches === 0;
+          if (matches) { visibleModules += 1; visibleLessons += matches; }
+          if (query && matches) module.open = true;
+          if (!query && savedOpenState !== null) module.open = savedOpenState.get(module);
+        });
+        if (!query) savedOpenState = null;
+        groups.forEach(group => {
+          group.hidden = ![...group.querySelectorAll('.module')].some(module => !module.hidden);
+        });
+        count.textContent = query
+          ? `${visibleLessons} matching lesson${visibleLessons === 1 ? '' : 's'} in ${visibleModules} module${visibleModules === 1 ? '' : 's'}`
+          : `${modules.length} modules · ${lessons.length} lessons`;
+        empty.hidden = visibleLessons !== 0;
+      }
+
+      search.addEventListener('input', filterLessons);
+      document.getElementById('expand-all').addEventListener('click', () => {
+        modules.filter(module => !module.hidden).forEach(module => { module.open = true; });
+      });
+      document.getElementById('collapse-all').addEventListener('click', () => {
+        modules.filter(module => !module.hidden).forEach(module => { module.open = false; });
+      });
+      document.getElementById('clear-search').addEventListener('click', () => {
+        search.value = '';
+        filterLessons();
+        search.focus();
+      });
+
+      function revealTarget() {
+        const target = document.getElementById(location.hash.slice(1));
+        if (!target) return;
+        if (!target.closest('#course-modules')) return;
+        if (search.value) { search.value = ''; filterLessons(); }
+        const module = target.closest('details.module');
+        if (module) module.open = true;
+        requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+      }
+      document.querySelectorAll('.phase-nav a').forEach(link => {
+        link.addEventListener('click', () => {
+          if (search.value) { search.value = ''; filterLessons(); }
+        });
+      });
+      window.addEventListener('hashchange', revealTarget);
+      if (location.hash) revealTarget();
+    })();
+  </script>
+</body>
+</html>
