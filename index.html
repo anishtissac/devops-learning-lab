@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Networking Lesson 1 — What Is a Network?</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: #131c31;
+      --panel2: #0e1729;
+      --line: #2a3855;
+      --text: #eef4ff;
+      --muted: #aab8d1;
+      --cyan: #62d9ec;
+      --green: #83e6b1;
+      --amber: #ffd078;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 15% 0%, #1a2a50 0, transparent 38rem),
+        var(--bg);
+      color: var(--text);
+      font: 16px/1.6 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main { width: min(980px, 92vw); margin: 0 auto; padding: 40px 0 64px; }
+    .eyebrow { color: var(--cyan); font-size: .78rem; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { max-width: 760px; margin: 8px 0 12px; font-size: clamp(2.2rem, 5vw, 3.5rem); line-height: 1.08; }
+    h2 { margin: 0 0 10px; font-size: 1.25rem; }
+    p { margin: 8px 0; color: var(--muted); }
+    .intro { max-width: 720px; font-size: 1.08rem; }
+    .panel {
+      margin-top: 22px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(145deg, var(--panel), #10182a);
+      box-shadow: 0 18px 50px #0002;
+    }
+    .simple-english {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .simple-english div {
+      padding: 12px 14px;
+      border-left: 3px solid var(--cyan);
+      border-radius: 8px;
+      background: #0e192d;
+      color: var(--text);
+    }
+    .note {
+      margin-top: 16px;
+      padding: 13px 15px;
+      border-left: 3px solid var(--green);
+      border-radius: 8px;
+      background: #10251f;
+      color: #d9f9e7;
+    }
+    .examples { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 15px; }
+    .example {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel2);
+    }
+    .example strong { color: var(--text); }
+    .diagram-shell {
+      margin-top: 18px;
+      padding: 20px;
+      border: 1px dashed #456183;
+      border-radius: 18px;
+      background: #0b1527;
+    }
+    .network-label {
+      margin-bottom: 16px;
+      color: var(--cyan);
+      font-weight: 750;
+      text-align: center;
+    }
+    .network-map {
+      display: grid;
+      grid-template-columns: 1fr 50px 1fr 50px 1fr;
+      align-items: center;
+      gap: 8px;
+    }
+    .device {
+      min-height: 116px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      padding: 14px 10px;
+      border: 1px solid #344463;
+      border-radius: 15px;
+      background: #131e34;
+      text-align: center;
+      transition: border-color .2s, background .2s, transform .2s;
+    }
+    .device.connected { border-color: var(--green); background: #12271f; }
+    .device .icon { font-size: 1.8rem; line-height: 1.2; }
+    .device strong { display: block; margin-top: 7px; }
+    .device small { color: var(--muted); }
+    .link {
+      height: 3px;
+      position: relative;
+      border-radius: 9px;
+      background: #34415a;
+    }
+    .link.active { background: var(--green); box-shadow: 0 0 14px #83e6b155; }
+    .link::after {
+      content: "›";
+      position: absolute;
+      right: 3px;
+      top: -15px;
+      color: #7183a4;
+      font-size: 1.6rem;
+    }
+    .link.active::after { color: var(--green); }
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    button {
+      padding: 10px 15px;
+      border: 1px solid #40516f;
+      border-radius: 10px;
+      background: #1a2740;
+      color: var(--text);
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+    button:hover:not(:disabled) { border-color: var(--cyan); }
+    button.primary { border-color: #277083; background: #123447; color: #d9f9ff; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    .status {
+      min-height: 52px;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #111b2e;
+      color: var(--muted);
+    }
+    .status.ready { border-color: #356548; color: #d9f9e7; }
+    .status.message { border-color: #836b3a; color: #fff0c9; }
+    .message-dot {
+      width: 12px; height: 12px; display: none; margin: 12px auto 0;
+      border-radius: 50%; background: var(--amber); box-shadow: 0 0 18px #ffd07899;
+    }
+    .message-dot.animate { display: block; animation: travel .8s ease-in-out 2 alternate; }
+    @keyframes travel {
+      from { transform: translateX(-110px); }
+      to { transform: translateX(110px); }
+    }
+    .storyboard { display: grid; gap: 10px; padding: 0; list-style: none; counter-reset: scene; }
+    .storyboard li { counter-increment: scene; display: flex; gap: 12px; color: var(--muted); }
+    .storyboard li::before {
+      content: counter(scene);
+      flex: 0 0 27px; height: 27px; display: grid; place-items: center;
+      border-radius: 50%; background: #1e3043; color: var(--cyan); font-weight: 750;
+    }
+    .quiz { margin-top: 14px; padding: 16px; border-radius: 14px; background: #0e1729; }
+    .choices { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    #quizAnswer { min-height: 28px; margin-top: 10px; color: var(--green); font-weight: 650; }
+    details { margin-top: 22px; }
+    summary { color: var(--cyan); font-weight: 700; cursor: pointer; }
+    .roadmap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; padding-left: 22px; color: var(--muted); }
+    .roadmap li { padding: 3px 0; }
+    .roadmap strong { color: var(--text); }
+    .footer { margin-top: 22px; font-size: .92rem; }
+    code { color: #b9d9ff; }
+
+    @media (max-width: 680px) {
+      main { padding-top: 28px; }
+      .panel { padding: 18px; }
+      .examples, .roadmap { grid-template-columns: 1fr; }
+      .network-map { grid-template-columns: 1fr; }
+      .device { min-height: 92px; }
+      .link { width: 3px; height: 26px; justify-self: center; }
+      .link::after { right: -7px; top: 7px; transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Networking · Lesson 1</div>
+  <h1>What is a network?</h1>
+  <p class="intro">We’ll begin with the basic idea: what a network is, before we study interfaces and IP addresses.</p>
+
+  <section class="panel">
+    <h2>Simple explanation</h2>
+    <div class="simple-english">
+      <div>A <strong>device</strong> can be a laptop, phone, server, or router.</div>
+      <div>A <strong>network</strong> connects devices so they can exchange data.</div>
+      <div>The connection can use Wi-Fi, a cable, or a virtual connection in a cloud.</div>
+      <div>Devices use shared rules, called <strong>protocols</strong>, to send and receive data.</div>
+    </div>
+    <div class="note"><strong>Key idea:</strong> A connection gives devices a path to communicate. Network settings and security rules can still control which data is allowed.</div>
+  </section>
+
+  <section class="panel">
+    <h2>Picture a home Wi-Fi network</h2>
+    <p>The laptop and phone connect to the same Wi-Fi network through the access point. In this demo, connect both devices, then send a sample message.</p>
+
+    <div class="diagram-shell">
+      <div class="network-label">One local network</div>
+      <div class="network-map" aria-label="Laptop and phone connect through a Wi-Fi access point">
+        <div class="device" id="laptopNode">
+          <span class="icon" aria-hidden="true">💻</span>
+          <strong>Laptop</strong>
+          <small id="laptopState">Not connected</small>
+        </div>
+        <div class="link" id="leftLink" aria-hidden="true"></div>
+        <div class="device connected">
+          <span class="icon" aria-hidden="true">📶</span>
+          <strong>Wi-Fi access point</strong>
+          <small>Connects devices to this network</small>
+        </div>
+        <div class="link" id="rightLink" aria-hidden="true"></div>
+        <div class="device" id="phoneNode">
+          <span class="icon" aria-hidden="true">📱</span>
+          <strong>Phone</strong>
+          <small id="phoneState">Not connected</small>
+        </div>
+      </div>
+      <div class="message-dot" id="messageDot" aria-hidden="true"></div>
+
+      <div class="controls">
+        <button id="laptopButton" type="button" aria-pressed="false">Connect laptop</button>
+        <button id="phoneButton" type="button" aria-pressed="false">Connect phone</button>
+        <button id="sendButton" class="primary" type="button" disabled>Send sample message</button>
+      </div>
+      <div id="networkStatus" class="status" aria-live="polite">
+        Connect the laptop and phone to show two devices using the same local network.
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Where you’ll see networks</h2>
+    <div class="examples">
+      <div class="example">
+        <strong>Linux or office</strong>
+        <p>A laptop can connect to a local network through Wi-Fi or Ethernet.</p>
+      </div>
+      <div class="example">
+        <strong>Cloud</strong>
+        <p>An application server and a database server can connect through a private cloud network, such as an OCI VCN or AWS VPC.</p>
+      </div>
+    </div>
+    <div class="note"><strong>Network vs. Internet:</strong> A home Wi-Fi network is one network. The Internet is a very large system of connected networks.</div>
+  </section>
+
+  <section class="panel">
+    <h2>Explainer animation plan</h2>
+    <ol class="storyboard">
+      <li>Show a laptop and phone as separate dots.</li>
+      <li>Draw a connection from each device to the Wi-Fi access point.</li>
+      <li>Send a glowing data packet from the laptop to the phone.</li>
+      <li>Zoom out to show that the Internet connects many networks.</li>
+    </ol>
+    <p><strong>Voiceover:</strong> “A network connects devices. When the connection and rules allow, the devices can exchange data.”</p>
+  </section>
+
+  <section class="panel">
+    <h2>Check your understanding</h2>
+    <p>Which statement best describes a network?</p>
+    <div class="quiz">
+      <div class="choices">
+        <button class="quiz-choice" data-correct="true" type="button">Connected devices that can exchange data</button>
+        <button class="quiz-choice" data-correct="false" type="button">One Wi-Fi router by itself</button>
+        <button class="quiz-choice" data-correct="false" type="button">Only the Internet</button>
+      </div>
+      <div id="quizAnswer" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <details class="panel">
+    <summary>Course roadmap</summary>
+    <ol class="roadmap">
+      <li><strong>Network foundations:</strong> networks, devices, interfaces, and IP addresses</li>
+      <li><strong>IP addressing:</strong> IPv4, IPv6, private and public addresses</li>
+      <li><strong>CIDR and subnet masks:</strong> prefixes and network/host parts</li>
+      <li><strong>Subnetting and VLSM:</strong> ranges, subnet sizes, and address planning</li>
+      <li><strong>Ports and connections:</strong> TCP, UDP, ports, and sockets</li>
+      <li><strong>Network services:</strong> DNS, HTTP/HTTPS, TLS, SSH, and ICMP</li>
+      <li><strong>Traffic delivery:</strong> gateways, routing, ARP, NAT, MTU, and firewalls</li>
+      <li><strong>Linux networking:</strong> commands and safe troubleshooting practice</li>
+      <li><strong>Cloud networking:</strong> VCN/VPC, subnets, routes, gateways, security rules, and load balancers</li>
+      <li><strong>Containers and Kubernetes:</strong> namespaces, bridges, Pod IPs, Services, and Ingress</li>
+      <li><strong>DevOps and AI:</strong> APIs, proxies, streaming, model endpoints, latency, and network troubleshooting</li>
+    </ol>
+  </details>
+
+  <p class="footer">Next lesson: what a network interface is. We’ll pause here so you can ask questions first.</p>
+</main>
+
+<script>
+  const connected = { laptop: false, phone: false };
+
+  const laptopButton = document.getElementById("laptopButton");
+  const phoneButton = document.getElementById("phoneButton");
+  const sendButton = document.getElementById("sendButton");
+  const statusBox = document.getElementById("networkStatus");
+  const messageDot = document.getElementById("messageDot");
+
+  function updateDemo() {
+    document.getElementById("laptopNode").classList.toggle("connected", connected.laptop);
+    document.getElementById("phoneNode").classList.toggle("connected", connected.phone);
+    document.getElementById("laptopState").textContent = connected.laptop ? "Connected to Wi-Fi" : "Not connected";
+    document.getElementById("phoneState").textContent = connected.phone ? "Connected to Wi-Fi" : "Not connected";
+    document.getElementById("leftLink").classList.toggle("active", connected.laptop);
+    document.getElementById("rightLink").classList.toggle("active", connected.phone);
+
+    laptopButton.textContent = connected.laptop ? "Disconnect laptop" : "Connect laptop";
+    phoneButton.textContent = connected.phone ? "Disconnect phone" : "Connect phone";
+    laptopButton.setAttribute("aria-pressed", String(connected.laptop));
+    phoneButton.setAttribute("aria-pressed", String(connected.phone));
+    sendButton.disabled = !(connected.laptop && connected.phone);
+
+    statusBox.classList.remove("ready", "message");
+    if (connected.laptop && connected.phone) {
+      statusBox.textContent = "Both devices are on the same local network. They can exchange data if network settings allow.";
+      statusBox.classList.add("ready");
+    } else if (connected.laptop || connected.phone) {
+      statusBox.textContent = "One device is connected. Connect the other device to demonstrate data exchange.";
+    } else {
+      statusBox.textContent = "Connect the laptop and phone to show two devices using the same local network.";
+    }
+  }
+
+  laptopButton.addEventListener("click", () => {
+    connected.laptop = !connected.laptop;
+    updateDemo();
+  });
+
+  phoneButton.addEventListener("click", () => {
+    connected.phone = !connected.phone;
+    updateDemo();
+  });
+
+  sendButton.addEventListener("click", () => {
+    if (!(connected.laptop && connected.phone)) return;
+    statusBox.textContent = "Demo message sent: Laptop → Wi-Fi access point → Phone. This is a visual simulation.";
+    statusBox.classList.remove("ready");
+    statusBox.classList.add("message");
+    messageDot.classList.remove("animate");
+    void messageDot.offsetWidth;
+    messageDot.classList.add("animate");
+  });
+
+  document.querySelectorAll(".quiz-choice").forEach(button => {
+    button.addEventListener("click", () => {
+      document.getElementById("quizAnswer").textContent =
+        button.dataset.correct === "true"
+          ? "Correct. A network connects devices so they can exchange data."
+          : "Try again. A router can help connect devices, but a network is the connected group.";
+    });
+  });
+
+  updateDemo();
+</script>
+</body>
+</html>
